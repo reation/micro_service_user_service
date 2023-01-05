@@ -28,6 +28,9 @@ var (
 	STATES_CANCEL       int64 = 3
 	STATES_INTERDICTION int64 = 4
 	STATES_AUDIT        int64 = 5
+
+	MEMBER_YES	int64 = 1
+	MEMBER_NO	int64 = 0
 )
 
 type (
@@ -38,6 +41,9 @@ type (
 		Delete(ctx context.Context, id int64) error
 		FindUserInfoByUserName(ctx context.Context, user_name string) (userInfo *User, err error)
 		UpdateUserStates(ctx context.Context, id int64, states int64) error
+		GetUserInfoByID(ctx context.Context, id int64) (userInfo *User, err error)
+		GetNormalUserInfoByID(ctx context.Context, id int64) (userInfo *User, err error)
+		FindUserinfoByNickName(ctx context.Context, nickname string) (userInfo *User, err error)
 	}
 
 	defaultUserModel struct {
@@ -94,6 +100,49 @@ func (m *defaultUserModel) FindUserInfoByUserName(ctx context.Context, user_name
 	case nil:
 		return &resp, nil
 	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultUserModel) GetUserInfoByID (ctx context.Context, id int64) (*User, error) {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", userRows, m.table)
+	var resp User
+	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultUserModel) GetNormalUserInfoByID (ctx context.Context, id int64) (*User, error) {
+	query := fmt.Sprintf("select %s from %s where `id` = ? and state = ? limit 1", userRows, m.table)
+	var resp User
+	err := m.conn.QueryRowCtx(ctx, &resp, query, id, 1)
+
+	switch err {
+	case nil:
+		return &resp, nil
+	case ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultUserModel) FindUserinfoByNickName (ctx context.Context, nickname string) (*User, error) {
+	query := fmt.Sprintf("select %s from %s where `nickname` = ? limit 1", userRows, m.table)
+	var resp User
+	err := m.conn.QueryRowCtx(ctx, &resp, query, nickname)
+	switch err {
+	case nil:
+		return &resp, nil
+	case ErrNotFound:
 		return nil, ErrNotFound
 	default:
 		return nil, err

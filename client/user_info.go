@@ -9,46 +9,48 @@ import (
 )
 
 const (
-	UserRcAddress = "192.168.1.21:8081"
+	UserInfoAddress = "192.168.1.21:7080"
 )
 
 func main() {
-
+	getUserInfoByID()
+	getNormalUserInfoByID()
 }
 
-func userCancel() {
-	conn, err := grpc.Dial(UserRcAddress, grpc.WithInsecure(), grpc.WithBlock())
+func getUserInfoByID() {
+	conn, err := grpc.Dial(UserInfoAddress, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 
 	defer conn.Close()
-	c := protoc.NewUserRegisterOrCancelClient(conn)
+	c := protoc.NewUserInfoClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.UserCancel(ctx, &protoc.CancelRequest{Id: 1})
+	r, err := c.GetUserInfoByID(ctx, &protoc.UserInfoRequest{Id: 2})
 	if err != nil {
 		log.Fatalf("error : %v", err)
 	}
 
 	log.Printf("states: %d", r.GetStates())
+	log.Println(r.UserInfo)
 }
 
-func userRegister() {
-	conn, err := grpc.Dial(UserRcAddress, grpc.WithInsecure(), grpc.WithBlock())
+func getNormalUserInfoByID() {
+	conn, err := grpc.Dial(UserInfoAddress, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 
 	defer conn.Close()
-	c := protoc.NewUserRegisterOrCancelClient(conn)
+	c := protoc.NewUserInfoClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.UserRegister(ctx, &protoc.RegisterRequest{UserName: "levi", Password: "6676211", Nickname: "table", Sex: 0, Birthday: "1986-10-29"})
+	r, err := c.GetNormalUserInfoByID(ctx, &protoc.NormalUserInfoRequest{Id: 1})
 	if err != nil {
 		log.Fatalf("error : %v", err)
 	}
 
 	log.Printf("states: %d", r.GetStates())
-	log.Printf("id: %d", r.GetId())
+	log.Println(r.UserInfo)
 }

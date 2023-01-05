@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"micro_service_user_service/config"
 	"micro_service_user_service/model"
 
 	"micro_service_user_service/protoc"
@@ -28,7 +29,7 @@ func (l *UserCancelLogic) UserCancel(in *protoc.CancelRequest) (*protoc.CancelRe
 	// todo: add your logic here and delete this line
 	err := l.svcCtx.UserModel.UpdateUserStates(l.ctx, in.GetId(), model.STATES_CANCEL)
 	if err != nil {
-		return &protoc.CancelResponse{States: 0}, nil
+		return &protoc.CancelResponse{States: config.STATES_ERROR}, nil
 	}
-	return &protoc.CancelResponse{States: 1}, nil
+	return &protoc.CancelResponse{States: config.STATES_NORMAL}, nil
 }

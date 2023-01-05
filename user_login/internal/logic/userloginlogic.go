@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"micro_service_user_service/config"
 	"micro_service_user_service/model"
 	"micro_service_user_service/tool"
 
@@ -32,17 +33,17 @@ func (l *UserLoginLogic) UserLogin(in *protoc.LoginRequest) (*protoc.LoginRespon
 	if err != nil {
 		switch err {
 		case model.ErrNotFound:
-			return &protoc.LoginResponse{States: 2, UserInfo: &returnInfo}, nil
+			return &protoc.LoginResponse{States: config.STATES_EMPTY, UserInfo: &returnInfo}, nil
 		default:
-			return &protoc.LoginResponse{States: 11, UserInfo: &returnInfo}, nil
+			return &protoc.LoginResponse{States: config.STATES_ERROR, UserInfo: &returnInfo}, nil
 		}
 	}
 	if userInfo.Password != tool.MD5(in.GetPassword()) {
-		return &protoc.LoginResponse{States: 3, UserInfo: &returnInfo}, err
+		return &protoc.LoginResponse{States: config.STATES_CHECK_ERROR, UserInfo: &returnInfo}, err
 	}
 	returnInfo.Id = userInfo.Id
 	returnInfo.UserName = userInfo.UserName
 	returnInfo.IsMember = userInfo.IsMember
 
-	return &protoc.LoginResponse{States: 1, UserInfo: &returnInfo}, nil
+	return &protoc.LoginResponse{States: config.STATES_NORMAL, UserInfo: &returnInfo}, nil
 }

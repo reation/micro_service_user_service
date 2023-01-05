@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package user_info;
+
+option go_package = "./protoc";
+
+message UserDetail {
+  int64 id = 1;
+  string user_name = 2;
+  string nickname = 3;
+  int64 sex = 4;
+  string birthday = 5;
+  int64 states = 6;
+  int64 is_member = 7;
+}
+
+message UserInfoRequest {
+  int64 id = 1;
+}
+
+message UserInfoResponse {
+  int64 states = 1;
+  UserDetail userInfo = 2;
+}
+
+message NormalUserInfoRequest {
+  int64 id = 1;
+}
+
+message NormalUserInfoResponse {
+  int64 states = 1;
+  UserDetail userInfo = 2;
+}
+
+service user_info {
+  rpc getUserInfoByID (UserInfoRequest) returns (UserInfoResponse);
+  rpc getNormalUserInfoByID (NormalUserInfoRequest) returns (NormalUserInfoResponse);
+}

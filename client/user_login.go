@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	address = "192.168.1.21:8080"
+	UserLoginAddress = "192.168.1.21:8080"
 )
 
 func main() {
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(UserLoginAddress, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

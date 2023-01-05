@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package find_user_info;
+
+option go_package = "./protoc";
+
+message UserData {
+  int64 id = 1;
+  string user_name = 2;
+  string nickname = 3;
+  int64 sex = 4;
+  string birthday = 5;
+  int64 states = 6;
+  int64 is_member = 7;
+}
+
+message ByUserNameRequest {
+  string user_name = 1;
+}
+
+message ByUserNameResponse {
+  int64 states = 1;
+  UserData user_data = 2;
+}
+
+message ByNickNameRequest {
+  string nickname = 1;
+}
+
+message ByNickNameResponse {
+  int64 states = 1;
+  UserData user_data = 2;
+}
+
+message CheckUserMemberRequest {
+  int64 id = 1;
+}
+
+message CheckUserMemberResponse {
+  int64 states = 1;
+  int64 is_member = 2;
+}
+
+service FindUserInfo {
+  rpc FindUserInfoByUserName (ByUserNameRequest) returns (ByUserNameResponse);
+  rpc FindUserInfoByNickName (ByNickNameRequest) returns (ByNickNameResponse);
+  rpc CheckUserMemberById (CheckUserMemberRequest) returns (CheckUserMemberResponse);
+}

@@ -26,7 +26,7 @@ func NewFindUserInfoByNickNameLogic(ctx context.Context, svcCtx *svc.ServiceCont
 
 func (l *FindUserInfoByNickNameLogic) FindUserInfoByNickName(in *protoc.ByNickNameRequest) (*protoc.ByNickNameResponse, error) {
 	// todo: add your logic here and delete this line
-	result, err := l.svcCtx.UserModel.FindUserinfoByNickName(l.ctx, in.Nickname)
+	result, err := l.svcCtx.UserModel.FindUserInfoByNickName(l.ctx, in.Nickname)
 	switch err {
 	case nil:
 		resp := protoc.UserData{

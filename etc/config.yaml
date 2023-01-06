@@ -1,0 +1,8 @@
+Mysql:
+  UserTable:
+    User: "root"
+    Passwd: "19861029"
+    Addr: "152.136.253.191"
+    Port: "3306"
+    DBName: "shop_microservice_user"
+

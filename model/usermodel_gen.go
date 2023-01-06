@@ -29,8 +29,8 @@ var (
 	STATES_INTERDICTION int64 = 4
 	STATES_AUDIT        int64 = 5
 
-	MEMBER_YES	int64 = 1
-	MEMBER_NO	int64 = 0
+	MEMBER_YES int64 = 1
+	MEMBER_NO  int64 = 0
 )
 
 type (
@@ -43,7 +43,10 @@ type (
 		UpdateUserStates(ctx context.Context, id int64, states int64) error
 		GetUserInfoByID(ctx context.Context, id int64) (userInfo *User, err error)
 		GetNormalUserInfoByID(ctx context.Context, id int64) (userInfo *User, err error)
-		FindUserinfoByNickName(ctx context.Context, nickname string) (userInfo *User, err error)
+		FindUserInfoByNickName(ctx context.Context, nickname string) (userInfo *User, err error)
+		UpdateUserInfoByID(ctx context.Context, id int64, nickname string, sex int64, birthday time.Time) (user_id int64, err error)
+		UpdateUserMemberByID(ctx context.Context, id int64, is_member int64) (user_id int64, err error)
+		UpdateUserPassWordByID(ctx context.Context, id int64, password string) (user_id int64, err error)
 	}
 
 	defaultUserModel struct {
@@ -106,7 +109,7 @@ func (m *defaultUserModel) FindUserInfoByUserName(ctx context.Context, user_name
 	}
 }
 
-func (m *defaultUserModel) GetUserInfoByID (ctx context.Context, id int64) (*User, error) {
+func (m *defaultUserModel) GetUserInfoByID(ctx context.Context, id int64) (*User, error) {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", userRows, m.table)
 	var resp User
 	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
@@ -120,7 +123,7 @@ func (m *defaultUserModel) GetUserInfoByID (ctx context.Context, id int64) (*Use
 	}
 }
 
-func (m *defaultUserModel) GetNormalUserInfoByID (ctx context.Context, id int64) (*User, error) {
+func (m *defaultUserModel) GetNormalUserInfoByID(ctx context.Context, id int64) (*User, error) {
 	query := fmt.Sprintf("select %s from %s where `id` = ? and state = ? limit 1", userRows, m.table)
 	var resp User
 	err := m.conn.QueryRowCtx(ctx, &resp, query, id, 1)
@@ -135,7 +138,7 @@ func (m *defaultUserModel) GetNormalUserInfoByID (ctx context.Context, id int64)
 	}
 }
 
-func (m *defaultUserModel) FindUserinfoByNickName (ctx context.Context, nickname string) (*User, error) {
+func (m *defaultUserModel) FindUserInfoByNickName(ctx context.Context, nickname string) (*User, error) {
 	query := fmt.Sprintf("select %s from %s where `nickname` = ? limit 1", userRows, m.table)
 	var resp User
 	err := m.conn.QueryRowCtx(ctx, &resp, query, nickname)
@@ -147,6 +150,39 @@ func (m *defaultUserModel) FindUserinfoByNickName (ctx context.Context, nickname
 	default:
 		return nil, err
 	}
+}
+
+func (m *defaultUserModel) UpdateUserInfoByID(ctx context.Context, id int64, nickname string, sex int64, birthday time.Time) (user_id int64, err error) {
+	query := fmt.Sprintf("update %s set `nickname` = ?, `sex` = ?, birthday = ? where id = ?", m.table)
+	ret, err := m.conn.ExecCtx(ctx, query, nickname, sex, birthday, id)
+	if err != nil {
+		return 0, err
+	}
+
+	lastID, _ := ret.LastInsertId()
+	return lastID, err
+}
+
+func (m *defaultUserModel) UpdateUserMemberByID(ctx context.Context, id, is_member int64) (user_id int64, err error) {
+	query := fmt.Sprintf("update %s set `is_member` = ? where id = ?", m.table)
+	ret, err := m.conn.ExecCtx(ctx, query, is_member, id)
+	if err != nil {
+		return 0, err
+	}
+
+	lastID, _ := ret.LastInsertId()
+	return lastID, err
+}
+
+func (m *defaultUserModel) UpdateUserPassWordByID(ctx context.Context, id int64, password string) (user_id int64, err error) {
+	query := fmt.Sprintf("update %s set `password` = ? where id = ?", m.table)
+	ret, err := m.conn.ExecCtx(ctx, query, password, id)
+	if err != nil {
+		return 0, err
+	}
+
+	lastID, _ := ret.LastInsertId()
+	return lastID, err
 }
 
 func (m *defaultUserModel) Insert(ctx context.Context, data *User) (sql.Result, error) {

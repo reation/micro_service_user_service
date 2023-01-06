@@ -29,7 +29,7 @@ func NewUpdateUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 func (l *UpdateUserInfoLogic) UpdateUserInfo(in *protoc.UpdateUserInfoRequest) (*protoc.UpdateUserInfoResponse, error) {
 	// todo: add your logic here and delete this line]
 	_, err := l.svcCtx.UserModel.GetUserInfoByID(l.ctx, in.GetId())
-	if err != model.ErrNotFound {
+	if err == model.ErrNotFound {
 		return &protoc.UpdateUserInfoResponse{States: config.STATES_EMPTY, Id: 0}, nil
 	}
 	if err != nil {

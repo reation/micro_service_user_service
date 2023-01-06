@@ -13,8 +13,26 @@ const (
 )
 
 func main() {
+	//type a struct {
+	//	Id       int64  `db:"id"`
+	//	UserName string `db:"user_name"` // 用户名
+	//	Password string `db:"password"`  // 密码
+	//	Nickname string `db:"nickname"`  // 昵称
+	//	Sex      int64  `db:"sex"`       // 性别 0:男 1:女
+	//}
+	//
+	//b := a{
+	//	Id:       3,
+	//	UserName: "rea",
+	//	Password: "344444",
+	//}
+	//
+	//data, _ := json.Marshal(b)
+	//var resp a
+	//json.Unmarshal([]byte(data), &resp)
+	//fmt.Println(resp)
 	getUserInfoByID()
-	getNormalUserInfoByID()
+	//getNormalUserInfoByID()
 }
 
 func getUserInfoByID() {

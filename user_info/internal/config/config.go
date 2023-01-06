@@ -9,4 +9,8 @@ type Config struct {
 			DataSourceName string
 		}
 	}
+	RedisCluster struct {
+		Host []string
+		Pass string
+	}
 }

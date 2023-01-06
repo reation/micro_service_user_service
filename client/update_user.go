@@ -28,7 +28,7 @@ func UpdateUserInfo() {
 	c := protoc.NewUpdateUserClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.UpdateUserInfo(ctx, &protoc.UpdateUserInfoRequest{Id: 1, Nickname: "levi", Sex: 0, Birthday: "1986-10-28"})
+	r, err := c.UpdateUserInfo(ctx, &protoc.UpdateUserInfoRequest{Id: 2, Nickname: "levi1", Sex: 0, Birthday: "1986-10-28"})
 	if err != nil {
 		log.Fatalf("error : %v", err)
 	}

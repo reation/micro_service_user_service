@@ -18,14 +18,11 @@ import (
 
 var configFile = flag.String("f", "etc/updateuser.yaml", "the config file")
 
-//var configFile2 = flag.String("f", "../etc/updateuser.yaml", "the config file")
-
 func main() {
 	flag.Parse()
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-	//conf.MustLoad(*configFile2, &c)
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {

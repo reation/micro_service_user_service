@@ -28,7 +28,7 @@ func NewUpdateUserMemberLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *UpdateUserMemberLogic) UpdateUserMember(in *protoc.UpdateUserMemberRequest) (*protoc.UpdateUserMemberResponse, error) {
 	// todo: add your logic here and delete this line
 	_, err := l.svcCtx.UserModel.GetUserInfoByID(l.ctx, in.GetId())
-	if err != model.ErrNotFound {
+	if err == model.ErrNotFound {
 		return &protoc.UpdateUserMemberResponse{States: config.STATES_EMPTY, Id: 0}, nil
 	}
 	if err != nil {

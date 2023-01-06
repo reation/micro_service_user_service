@@ -5,7 +5,9 @@ package model
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	goRedis "github.com/go-redis/redis/v8"
 	"strings"
 	"time"
 
@@ -31,6 +33,9 @@ var (
 
 	MEMBER_YES int64 = 1
 	MEMBER_NO  int64 = 0
+
+	USER_INFO_REDIS_KEY string = "user_info_id_"
+	USER_INFO_REDIS_VALIDITY time.Duration = 60 * 60 * 24 * 1000 * 1000 * 1000
 )
 
 type (
@@ -52,6 +57,7 @@ type (
 	defaultUserModel struct {
 		conn  sqlx.SqlConn
 		table string
+		redisModel goRedis.ClusterClient
 	}
 
 	User struct {
@@ -68,10 +74,11 @@ type (
 	}
 )
 
-func newUserModel(conn sqlx.SqlConn) *defaultUserModel {
+func newUserModel(conn sqlx.SqlConn, redisModel goRedis.ClusterClient) *defaultUserModel {
 	return &defaultUserModel{
 		conn:  conn,
 		table: "`user`",
+		redisModel : redisModel,
 	}
 }
 
@@ -110,11 +117,22 @@ func (m *defaultUserModel) FindUserInfoByUserName(ctx context.Context, user_name
 }
 
 func (m *defaultUserModel) GetUserInfoByID(ctx context.Context, id int64) (*User, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", userRows, m.table)
+
 	var resp User
+	redisKey := fmt.Sprintf("%s%d", USER_INFO_REDIS_KEY, id)
+	redisData := m.redisModel.Get(ctx, redisKey)
+	if redisData.Val() != ""{
+		err := json.Unmarshal([]byte(redisData.Val()), &resp)
+		if err == nil {
+			return &resp, nil
+		}
+	}
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", userRows, m.table)
 	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
 	switch err {
 	case nil:
+		data, _ := json.Marshal(resp)
+		m.redisModel.Set(ctx, redisKey, string(data), USER_INFO_REDIS_VALIDITY)
 		return &resp, nil
 	case ErrNotFound:
 		return nil, ErrNotFound
@@ -124,12 +142,23 @@ func (m *defaultUserModel) GetUserInfoByID(ctx context.Context, id int64) (*User
 }
 
 func (m *defaultUserModel) GetNormalUserInfoByID(ctx context.Context, id int64) (*User, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? and state = ? limit 1", userRows, m.table)
-	var resp User
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id, 1)
 
+	var resp User
+	redisKey := fmt.Sprintf("%s%d", USER_INFO_REDIS_KEY, id)
+	redisData := m.redisModel.Get(ctx, redisKey)
+	if redisData.Val() != ""{
+		err := json.Unmarshal([]byte(redisData.Val()), &resp)
+		if err == nil {
+			return &resp, nil
+		}
+	}
+
+	query := fmt.Sprintf("select %s from %s where `id` = ? and state = ? limit 1", userRows, m.table)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, id, 1)
 	switch err {
 	case nil:
+		data, _ := json.Marshal(resp)
+		m.redisModel.Set(ctx, redisKey, string(data), USER_INFO_REDIS_VALIDITY)
 		return &resp, nil
 	case ErrNotFound:
 		return nil, ErrNotFound
@@ -158,7 +187,8 @@ func (m *defaultUserModel) UpdateUserInfoByID(ctx context.Context, id int64, nic
 	if err != nil {
 		return 0, err
 	}
-
+	redisKey := fmt.Sprintf("%s%d", USER_INFO_REDIS_KEY, id)
+	m.redisModel.Del(ctx, redisKey)
 	lastID, _ := ret.LastInsertId()
 	return lastID, err
 }
@@ -169,7 +199,8 @@ func (m *defaultUserModel) UpdateUserMemberByID(ctx context.Context, id, is_memb
 	if err != nil {
 		return 0, err
 	}
-
+	redisKey := fmt.Sprintf("%s%d", USER_INFO_REDIS_KEY, id)
+	m.redisModel.Del(ctx, redisKey)
 	lastID, _ := ret.LastInsertId()
 	return lastID, err
 }
@@ -200,6 +231,8 @@ func (m *defaultUserModel) Update(ctx context.Context, data *User) error {
 func (m *defaultUserModel) UpdateUserStates(ctx context.Context, id int64, states int64) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, "`states`")
 	_, err := m.conn.ExecCtx(ctx, query, states, id)
+	redisKey := fmt.Sprintf("%s%d", USER_INFO_REDIS_KEY, id)
+	m.redisModel.Del(ctx, redisKey)
 	return err
 }
 

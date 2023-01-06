@@ -6,10 +6,18 @@ Etcd:
   Key: updateuser.rpc
 Mysql:
   UserTable:
-    DataSourceName: root:19861029@tcp(152.136.253.191:3306)/shop_microservice_user?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
     User: "root"
     Passwd: "19861029"
     Addr: "152.136.253.191"
     Port: "3306"
     DBName: "shop_microservice_user"
+RedisCluster:
+  Host:
+    - 81.70.211.73:8001
+    - 81.70.211.73:8002
+    - 49.233.55.149:8001
+    - 49.233.55.149:8002
+    - 152.136.253.191:8001
+    - 152.136.253.191:8002
+  Pass : "19861029"
 

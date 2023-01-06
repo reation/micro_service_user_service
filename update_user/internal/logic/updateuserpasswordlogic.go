@@ -29,7 +29,7 @@ func NewUpdateUserPassWordLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *UpdateUserPassWordLogic) UpdateUserPassWord(in *protoc.UpdateUserPassWordRequest) (*protoc.UpdateUserPassWordResponse, error) {
 	// todo: add your logic here and delete this line
 	_, err := l.svcCtx.UserModel.GetUserInfoByID(l.ctx, in.GetId())
-	if err != model.ErrNotFound {
+	if err == model.ErrNotFound {
 		return &protoc.UpdateUserPassWordResponse{States: config.STATES_EMPTY, Id: 0}, nil
 	}
 	if err != nil {

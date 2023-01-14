@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"micro_service_user_service/protoc"
-	"micro_service_user_service/update_user/internal/logic"
-	"micro_service_user_service/update_user/internal/svc"
+	"github.com/reation/micro_service_user_service/protoc"
+	"github.com/reation/micro_service_user_service/update_user/internal/logic"
+	"github.com/reation/micro_service_user_service/update_user/internal/svc"
 )
 
 type UpdateUserServer struct {

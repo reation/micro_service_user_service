@@ -6,7 +6,7 @@ package finduserinfo
 import (
 	"context"
 
-	"micro_service_user_service/protoc"
+	"github.com/reation/micro_service_user_service/protoc"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

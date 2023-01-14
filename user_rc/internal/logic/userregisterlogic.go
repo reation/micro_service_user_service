@@ -2,13 +2,13 @@ package logic
 
 import (
 	"context"
-	"micro_service_user_service/config"
-	"micro_service_user_service/model"
-	"micro_service_user_service/tool"
+	"github.com/reation/micro_service_user_service/config"
+	"github.com/reation/micro_service_user_service/model"
+	"github.com/reation/micro_service_user_service/tool"
 	"time"
 
-	"micro_service_user_service/protoc"
-	"micro_service_user_service/user_rc/internal/svc"
+	"github.com/reation/micro_service_user_service/protoc"
+	"github.com/reation/micro_service_user_service/user_rc/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

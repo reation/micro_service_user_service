@@ -3,9 +3,9 @@ package svc
 import (
 	"fmt"
 	goRedis "github.com/go-redis/redis/v8"
+	"github.com/reation/micro_service_user_service/find_user/internal/config"
+	"github.com/reation/micro_service_user_service/model"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"micro_service_user_service/find_user/internal/config"
-	"micro_service_user_service/model"
 	"runtime"
 	"time"
 )

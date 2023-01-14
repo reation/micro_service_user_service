@@ -1,4 +1,4 @@
-module micro_service_user_service
+module github.com/reation/micro_service_user_service
 
 go 1.19
 

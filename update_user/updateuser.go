@@ -4,10 +4,10 @@ import (
 	"flag"
 	"fmt"
 
-	"micro_service_user_service/protoc"
-	"micro_service_user_service/update_user/internal/config"
-	"micro_service_user_service/update_user/internal/server"
-	"micro_service_user_service/update_user/internal/svc"
+	"github.com/reation/micro_service_user_service/protoc"
+	"github.com/reation/micro_service_user_service/update_user/internal/config"
+	"github.com/reation/micro_service_user_service/update_user/internal/server"
+	"github.com/reation/micro_service_user_service/update_user/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"

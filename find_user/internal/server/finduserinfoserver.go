@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"micro_service_user_service/find_user/internal/logic"
-	"micro_service_user_service/find_user/internal/svc"
-	"micro_service_user_service/protoc"
+	"github.com/reation/micro_service_user_service/find_user/internal/logic"
+	"github.com/reation/micro_service_user_service/find_user/internal/svc"
+	"github.com/reation/micro_service_user_service/protoc"
 )
 
 type FindUserInfoServer struct {
